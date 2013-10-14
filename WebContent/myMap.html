@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Asynchronous Loading</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+    <script>
+var map;
+var drawingManager;
+var elevator;
+//var elevations;
+var infowindow;
+	
+function initialize() {
+  var mapOptions = {
+    zoom: 10,
+    center: new google.maps.LatLng(23.47, 120.954),
+    mapTypeId: google.maps.MapTypeId.TERRAIN
+  };
+
+  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  
+  drawingManager = new google.maps.drawing.DrawingManager({
+    drawingMode: google.maps.drawing.OverlayType.MARKER,
+    drawingControl: true,
+    drawingControlOptions: {
+      position: google.maps.ControlPosition.RIGHT_BOTTOM,
+      drawingModes: [
+        google.maps.drawing.OverlayType.MARKER,
+        google.maps.drawing.OverlayType.CIRCLE,
+        google.maps.drawing.OverlayType.POLYGON,
+        google.maps.drawing.OverlayType.POLYLINE,
+        google.maps.drawing.OverlayType.RECTANGLE
+      ]
+    },
+    markerOptions: {
+	  clickable:true,
+      draggable:true
+    },	
+    circleOptions: {
+      fillColor: '#ffff00',
+      fillOpacity: 1,
+      strokeWeight: 5,
+      clickable: false,
+      editable: true,
+      zIndex: 1
+    },
+	polygonOptions: {
+	},
+	polylineOptions: {
+	},
+	rectangleOptions: {
+	}	
+  });
+
+  drawingManager.setMap(map);
+
+  google.maps.event.addListener(drawingManager,'markercomplete',function(marker) {
+	infowindow = new google.maps.InfoWindow();
+	// Create an ElevationService
+	elevator = new google.maps.ElevationService();
+	var elevations;
+	
+	function update() {
+	  var position = marker.getPosition();
+	  var locations = [];
+	  locations.push(position);
+	  var positionalRequest = {
+	    'locations': locations
+	  }
+
+	  elevator.getElevationForLocations(positionalRequest, function(results, status) {
+	    if (status == google.maps.ElevationStatus.OK) {
+	      elevations=results;
+	      // Retrieve the first result
+	      if (results[0]) {
+	        // Open an info window indicating the elevation at the clicked position
+//	        infowindow.setContent('The location of this point is<br>' + results[0].location + '<br>' +'The elevation of this point is<br>' + results[0].elevation + ' meters.');
+//	        infowindow.setPosition(position);
+//	        infowindow.open(map);
+	      } else {
+	        alert('No results found');
+	      }
+	    } else {
+	      alert('Elevation service failed due to: ' + status);
+	    }
+	  });
+
+	  infowindow.setContent(position + '<br>' + elevations[0].elevation + ' meters');
+	  infowindow.setPosition(position);
+	  infowindow.open(map);	
+	}
+	
+
+	google.maps.event.addListener(marker,'click',update);
+	//FIXME:移動marker後，位置資料會更新，但海拔資料不會更新。
+	google.maps.event.addListener(marker,'position_changed',update);
+
+  });
+  
+  google.maps.event.addListener(drawingManager,'circlecomplete',function(circle) {
+  });
+
+  google.maps.event.addListener(drawingManager,'polygoncomplete',function(polygon) {
+  });
+
+  google.maps.event.addListener(drawingManager,'polylinecomplete',function(polyline) {
+  });
+
+  google.maps.event.addListener(drawingManager,'rectanglecomplete',function(rectangle) {
+  });  
+}
+
+function loadScript() {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCOz3UHHQSC5Vs7Ondt6lbXJB5IxtuyDB0&sensor=false&libraries=drawing&language=zh-TW&callback=initialize';
+  document.body.appendChild(script);
+}
+
+window.onload = loadScript;
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"></div>
+  </body>
+</html>
