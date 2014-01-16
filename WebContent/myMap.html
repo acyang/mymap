@@ -179,24 +179,38 @@ function add2Table(tableID) {
     element2.type = "text";
     element2.name="lngbox[]";
     element2.value=document.getElementById("Longitude").value;
+    element2.size=10;
+    element2.disabled=true;
     row.insertCell(2).appendChild(element2);
 
     var element3 = document.createElement("input");
-    element3.type = "txt";
+    element3.type = "text";
     element3.name="latbox[]";
     element3.value=document.getElementById("Latitude").value;
+    element3.size=10;
+    element3.disabled=true;    
     row.insertCell(3).appendChild(element3);
 
     var element4 = document.createElement("input");
-    element4.type = "txt";
+    element4.type = "text";
     element4.name="elvbox[]";
-    element4.value=document.getElementById("Elevation").value;
+    //element4.value=document.getElementById("Elevation").value;
+    element4.size=10;
+    element4.disabled=true;    
     row.insertCell(4).appendChild(element4);        
 
-    var element5 = document.createElement("button");
+    var element5 = document.createElement("input");
+    element5.type = "button";
     element5.name="editbtn[]";
     element5.value="Edit";
-    row.insertCell(5).appendChild(element5);      
+    row.insertCell(5).appendChild(element5);
+    
+    var element6 = document.createElement("input");
+    element6.type = "button";
+    element6.name="hidebtn[]";
+    element6.value="Hide";
+    row.insertCell(6).appendChild(element6);
+    
 //    var colCount = table.rows[0].cells.length;
 
 //    for(var i=0; i<colCount; i++) {
@@ -257,15 +271,6 @@ window.onload = loadScript;
           <th>Elevation</th>
           <th></th>
           <th></th>          
-        </tr>
-        <tr>
-          <td><input type="checkbox" name="chk"/></td>
-          <td>555 77 854</td>
-          <td>555 77 854</td>
-          <td>555 77 855</td>
-          <td>555 77 855</td>
-          <td><button>edit</button></td>
-          <td><button>hide</button></td>          
         </tr>
       </table>
       <form>
