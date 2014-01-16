@@ -6,27 +6,34 @@
     <meta charset="utf-8">
     <style>
       html, body {
+        float:left;
         height: 100%;
+        width: 100%;
         margin: 0px;
         padding: 0px
       }
       #map-canvas {
+        float:left;
         height: 90%;
-        width: 80%;
+        width: 70%;
         margin: 0px;
         padding: 0px        
       }
       #control-panel {
+        float:left;
         height: 90%;
-        width: 20%;
+        width: 30%;
         margin: 0px;
-        padding: 0px        
+        padding: 0px;
+        background-color:#EEEEEE        
       }
       #elevation_chart {
+        float:left;
         height: 10%;
         width: 100%;
         margin: 0px;
-        padding: 0px              
+        padding: 0px;
+        background-color:#FFFFFF              
       }
     </style>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -40,12 +47,14 @@ var infowindow;
 	
 function initialize() {
   var mapOptions = {
-    zoom: 10,
-    center: new google.maps.LatLng(23.47, 120.954),
+    zoom: 14,
+    center: new google.maps.LatLng(24.78, 120.99),
     mapTypeId: google.maps.MapTypeId.TERRAIN
   };
 
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  
+  directionsService = new google.maps.DirectionsService();
   directionsDisplay = new google.maps.DirectionsRenderer();
   directionsDisplay.setMap(map);
   
@@ -140,9 +149,79 @@ function initialize() {
   });  
 }
 
+function addMarker() {	
+  var Lat = document.getElementById("Longitude").value;
+  var Lng = document.getElementById("Latitude").value;  
+  var inputLatlng = new google.maps.LatLng(Lat, Lng);
+  var marker = new google.maps.Marker({
+      position: inputLatlng,
+      map: map,
+      clickable: true,
+      draggable: true     
+  });
+}
+
+function add2Table(tableID) {
+	 
+    var table = document.getElementById(tableID);
+
+    var rowCount = table.rows.length;
+    var row = table.insertRow(rowCount);
+    
+    var element1 = document.createElement("input");
+    element1.type = "checkbox";
+    element1.name="chkbox[]";
+    row.insertCell(0).appendChild(element1);
+    
+    row.insertCell(1).innerHTML = rowCount;
+    
+    var element2 = document.createElement("input");
+    element2.type = "text";
+    element2.name="lngbox[]";
+    element2.value=document.getElementById("Longitude").value;
+    row.insertCell(2).appendChild(element2);
+
+    var element3 = document.createElement("input");
+    element3.type = "txt";
+    element3.name="latbox[]";
+    element3.value=document.getElementById("Latitude").value;
+    row.insertCell(3).appendChild(element3);
+
+    var element4 = document.createElement("input");
+    element4.type = "txt";
+    element4.name="elvbox[]";
+    element4.value=document.getElementById("Elevation").value;
+    row.insertCell(4).appendChild(element4);        
+
+    var element5 = document.createElement("button");
+    element5.name="editbtn[]";
+    element5.value="Edit";
+    row.insertCell(5).appendChild(element5);      
+//    var colCount = table.rows[0].cells.length;
+
+//    for(var i=0; i<colCount; i++) {
+
+//        var newcell = row.insertCell(i);
+
+//        newcell.innerHTML = table.rows[0].cells[i].innerHTML;
+        //alert(newcell.childNodes);
+//        switch(newcell.childNodes[0].type) {
+//            case "text":
+//                    newcell.childNodes[0].value = "";
+//                    break;
+//            case "checkbox":
+//                    newcell.childNodes[0].checked = false;
+//                    break;
+//            case "select-one":
+//                    newcell.childNodes[0].selectedIndex = 0;
+//                    break;
+//        }
+//    }	
+}
+
 function calcRoute() {
-  var start = new google.maps.LatLng(25.31, 121.467);
-  var end = new google.maps.LatLng(23.32, 121.249);
+  var start = new google.maps.LatLng(24.67, 120.81);
+  var end = new google.maps.LatLng(24.91, 120.93);
   var request = {
       origin:start,
       destination:end,
@@ -168,7 +247,40 @@ window.onload = loadScript;
   </head>
   <body>
     <div id="map-canvas"></div>
-    <div id="control-panel"></div>
-    <div id="elevation_chart" onmouseout="clearMouseMarker()"></div>
+    <div id="control-panel">
+      <table id="stationsTable" border="1">
+        <tr>
+          <th>Select</th>
+          <th>No.</th>
+          <th>Longitude</th>
+          <th>Latitude</th>
+          <th>Elevation</th>
+          <th></th>
+          <th></th>          
+        </tr>
+        <tr>
+          <td><input type="checkbox" name="chk"/></td>
+          <td>555 77 854</td>
+          <td>555 77 854</td>
+          <td>555 77 855</td>
+          <td>555 77 855</td>
+          <td><button>edit</button></td>
+          <td><button>hide</button></td>          
+        </tr>
+      </table>
+      <form>
+        <fieldset>
+          <legend>Base Stations:</legend>
+          Longitude: <input id="Longitude" type="text"><br>
+          Latitude: <input id="Latitude" type="text"><br>
+          Vendor: <input type="text"><br>
+          <button type="button" onclick="addMarker();add2Table('stationsTable');">Add</button>
+          <button type="button" onclick="delMarker();delfTable();">Del</button>
+          <button type="button" onclick="calcRoute();">Cal</button>
+        </fieldset>
+      </form>     
+    </div>
+    <div id="elevation_chart" onmouseout="clearMouseMarker()">
+    </div>
   </body>
 </html>
