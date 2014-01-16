@@ -1,21 +1,41 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Asynchronous Loading</title>
+    <title>mymaps</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <style>
-      html, body, #map-canvas {
+      html, body {
         height: 100%;
         margin: 0px;
         padding: 0px
       }
+      #map-canvas {
+        height: 90%;
+        width: 80%;
+        margin: 0px;
+        padding: 0px        
+      }
+      #control-panel {
+        height: 90%;
+        width: 20%;
+        margin: 0px;
+        padding: 0px        
+      }
+      #elevation_chart {
+        height: 10%;
+        width: 100%;
+        margin: 0px;
+        padding: 0px              
+      }
     </style>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script>
 var map;
+var directionsDisplay;
+var directionsService;
 var drawingManager;
-var elevator;
-//var elevations;
+var elevationService;
 var infowindow;
 	
 function initialize() {
@@ -26,6 +46,8 @@ function initialize() {
   };
 
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  directionsDisplay = new google.maps.DirectionsRenderer();
+  directionsDisplay.setMap(map);
   
   drawingManager = new google.maps.drawing.DrawingManager({
     drawingMode: google.maps.drawing.OverlayType.MARKER,
@@ -65,7 +87,7 @@ function initialize() {
   google.maps.event.addListener(drawingManager,'markercomplete',function(marker) {
 	infowindow = new google.maps.InfoWindow();
 	// Create an ElevationService
-	elevator = new google.maps.ElevationService();
+	elevationService = new google.maps.ElevationService();
 	var elevations;
 	
 	function update() {
@@ -76,7 +98,7 @@ function initialize() {
 	    'locations': locations
 	  }
 
-	  elevator.getElevationForLocations(positionalRequest, function(results, status) {
+	  elevationService.getElevationForLocations(positionalRequest, function(results, status) {
 	    if (status == google.maps.ElevationStatus.OK) {
 	      elevations=results;
 	      // Retrieve the first result
@@ -118,6 +140,21 @@ function initialize() {
   });  
 }
 
+function calcRoute() {
+  var start = new google.maps.LatLng(25.31, 121.467);
+  var end = new google.maps.LatLng(23.32, 121.249);
+  var request = {
+      origin:start,
+      destination:end,
+      travelMode: google.maps.TravelMode.DRIVING
+  };
+  directionsService.route(request,function(response, status) {
+    if (status == google.maps.DirectionsStatus.OK) {
+      directionsDisplay.setDirections(response);
+    }
+  });
+}
+
 function loadScript() {
   var script = document.createElement('script');
   script.type = 'text/javascript';
@@ -131,5 +168,7 @@ window.onload = loadScript;
   </head>
   <body>
     <div id="map-canvas"></div>
+    <div id="control-panel"></div>
+    <div id="elevation_chart" onmouseout="clearMouseMarker()"></div>
   </body>
 </html>
