@@ -48,7 +48,7 @@ var infowindow;
 function initialize() {
   var mapOptions = {
     zoom: 14,
-    center: new google.maps.LatLng(24.78, 120.99),
+    center: new google.maps.LatLng(24.804538783738405, 120.99286079406738),
     mapTypeId: google.maps.MapTypeId.TERRAIN
   };
 
@@ -203,12 +203,29 @@ function add2Table(tableID) {
     element5.type = "button";
     element5.name="editbtn[]";
     element5.value="Edit";
+    element5.onclick = function() {
+    	if (this.value=="Edit") {
+    		this.parentNode.previousSibling.childNodes[0].disabled=false;
+    		this.parentNode.previousSibling.previousSibling.childNodes[0].disabled=false;
+    		this.parentNode.previousSibling.previousSibling.previousSibling.childNodes[0].disabled=false;
+        	this.value="Done";
+    	}	  
+    	else {
+    		this.parentNode.previousSibling.childNodes[0].disabled=true;
+    		this.parentNode.previousSibling.previousSibling.childNodes[0].disabled=true;
+    		this.parentNode.previousSibling.previousSibling.previousSibling.childNodes[0].disabled=true;    		
+    		this.value="Edit";
+    	}    	  
+    };
     row.insertCell(5).appendChild(element5);
     
     var element6 = document.createElement("input");
     element6.type = "button";
     element6.name="hidebtn[]";
     element6.value="Hide";
+    element6.onclick = function() {
+    	alert("abc");
+    };    
     row.insertCell(6).appendChild(element6);
     
 //    var colCount = table.rows[0].cells.length;
@@ -233,9 +250,32 @@ function add2Table(tableID) {
 //    }	
 }
 
+function deleteRow(tableID) {
+  try {
+    var table = document.getElementById(tableID);
+    var rowCount = table.rows.length;
+
+    for(var i=0; i<rowCount; i++) {
+        var row = table.rows[i];
+        var chkbox = row.cells[0].childNodes[0];
+        if(null != chkbox && true == chkbox.checked) {
+            if(rowCount <= 1) {
+                alert("Cannot delete all the rows.");
+                break;
+            }
+            table.deleteRow(i);
+            rowCount--;
+            i--;
+        }
+    }
+  } catch(e) {
+      alert(e);
+  }
+}
+
 function calcRoute() {
-  var start = new google.maps.LatLng(24.67, 120.81);
-  var end = new google.maps.LatLng(24.91, 120.93);
+  var start = new google.maps.LatLng(24.804538783738405, 120.99286079406738);
+  var end = new google.maps.LatLng(24.797877101950682, 121.0023021697998);
   var request = {
       origin:start,
       destination:end,
@@ -280,7 +320,7 @@ window.onload = loadScript;
           Latitude: <input id="Latitude" type="text"><br>
           Vendor: <input type="text"><br>
           <button type="button" onclick="addMarker();add2Table('stationsTable');">Add</button>
-          <button type="button" onclick="delMarker();delfTable();">Del</button>
+          <button type="button" onclick="deleteRow('stationsTable');">Del</button>
           <button type="button" onclick="calcRoute();">Cal</button>
         </fieldset>
       </form>     
