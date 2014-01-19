@@ -39,6 +39,7 @@
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script>
 var map;
+var markers = [];
 var directionsDisplay;
 var directionsService;
 var drawingManager;
@@ -159,6 +160,7 @@ function addMarker() {
       clickable: true,
       draggable: true     
   });
+  markers.push(marker);
 }
 
 function add2Table(tableID) {
@@ -209,12 +211,14 @@ function add2Table(tableID) {
     		this.parentNode.previousSibling.previousSibling.childNodes[0].disabled=false;
     		this.parentNode.previousSibling.previousSibling.previousSibling.childNodes[0].disabled=false;
         	this.value="Done";
+        	markers[rowCount-1].setAnimation(google.maps.Animation.BOUNCE);
     	}	  
     	else {
     		this.parentNode.previousSibling.childNodes[0].disabled=true;
     		this.parentNode.previousSibling.previousSibling.childNodes[0].disabled=true;
     		this.parentNode.previousSibling.previousSibling.previousSibling.childNodes[0].disabled=true;    		
     		this.value="Edit";
+    		markers[rowCount-1].setAnimation(null);
     	}    	  
     };
     row.insertCell(5).appendChild(element5);
@@ -224,7 +228,14 @@ function add2Table(tableID) {
     element6.name="hidebtn[]";
     element6.value="Hide";
     element6.onclick = function() {
-    	alert("abc");
+    	if (this.value=="Hide") {
+    		markers[rowCount-1].setMap(null);
+    		this.value="Show";
+    	}
+    	else {
+    		markers[rowCount-1].setMap(map);
+    		this.value="Hide";
+    	}
     };    
     row.insertCell(6).appendChild(element6);
     
