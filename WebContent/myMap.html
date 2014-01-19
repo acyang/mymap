@@ -40,12 +40,16 @@
     <script>
 var map;
 var markers = [];
+var chart;
 var directionsDisplay;
 var directionsService;
 var drawingManager;
 var elevationService;
 var infowindow;
-	
+
+// Load the Visualization API and the piechart package.
+google.load("visualization", "1", {packages: ["columnchart"]});
+
 function initialize() {
   var mapOptions = {
     zoom: 14,
@@ -54,6 +58,7 @@ function initialize() {
   };
 
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  chart = new google.visualization.ColumnChart(document.getElementById('elevation_chart'));
   
   directionsService = new google.maps.DirectionsService();
   directionsDisplay = new google.maps.DirectionsRenderer();
@@ -260,7 +265,7 @@ function add2Table(tableID) {
 //        }
 //    }	
 }
-
+//FIXME:刪除列之後，markers矩陣需要重新整理，連帶行號也要更新。
 function deleteRow(tableID) {
   try {
     var table = document.getElementById(tableID);
@@ -285,8 +290,8 @@ function deleteRow(tableID) {
 }
 
 function calcRoute() {
-  var start = new google.maps.LatLng(24.804538783738405, 120.99286079406738);
-  var end = new google.maps.LatLng(24.797877101950682, 121.0023021697998);
+  var start = new google.maps.LatLng(24.805045212743547, 120.98444938659668);
+  var end = new google.maps.LatLng(24.780266722993048, 121.02410316467285);
   var request = {
       origin:start,
       destination:end,
