@@ -40,6 +40,7 @@
     <script>
 var map;
 var markers = [];
+var circles = [];
 var chart;
 var directionsDisplay;
 var directionsService;
@@ -166,6 +167,19 @@ function addMarker() {
       draggable: true     
   });
   markers.push(marker);
+  var circle = new google.maps.Circle({
+	  center: inputLatlng,
+	  radius: 1000,
+      strokeColor: '#FF0000',
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: '#FF0000',
+      fillOpacity: 0.35,	  
+      map: map,
+      clickable: true,
+      draggable: true     
+  });
+  circles.push(circle);
 }
 
 function add2Table(tableID) {
